@@ -87,44 +87,21 @@ class ServerConnection(var socket: Socket) : Connection(socket) {
         }
 
         //Variante 1
-        /*list.sortBy { it.ping }
+        list.sortBy { it.ping }
         var shortened = list.subList(0, Math.round(list.size * 0.75f))
+        println("List size ${list.size}")
         var offset = Math.round(shortened.map { it.offset }.average())
 
-        return offset*/
+        return offset
 
         //Variante 2
-        list.sortBy { it.ping }
+        /*list.sortBy { it.ping }
         println("Selected: Ping ${list.get(0).ping} Offset ${list.get(0).offset}")
-        return list.get(0).offset
+        return list.get(0).offset*/
 
     }
 
     data class Offset(var ping: Long, var offset: Long)
-
-    private fun getTimestampOffset() : Long{
-
-        writer.write("timestamp")
-        writer.newLine()
-        var start = System.nanoTime()
-        writer.flush()
-
-        var read = reader.readLine()
-        var ping = System.nanoTime() - start
-
-        println("ping: $ping")
-
-        var own = System.nanoTime() + (ping / 2L)
-
-        if(read.startsWith("timestamprep")){
-            var other = read.split(" ")[1].toLong()
-
-            return other - own;
-
-        }
-        return Long.MIN_VALUE
-
-    }
 
     fun signal(ts: Long) {
 

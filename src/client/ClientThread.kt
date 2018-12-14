@@ -27,7 +27,7 @@ class ClientThread (val ss: Socket) : Runnable{
         println("Starting Listening")
         for(line in reader.lines()){
 
-            if(!line.equals("ping"))
+            if(!line.equals("ping") && !line.equals("timestamp"))
                 println("Recieved $line")
             when{
 
@@ -56,10 +56,10 @@ class ClientThread (val ss: Socket) : Runnable{
 
     fun signal(ts: Long){
         Thread{
-            var diff = ts - System.nanoTime()
+            var diff = ts - System.currentTimeMillis()
             println("diff $diff")
-            Thread.sleep(diff / 1000000L)
-            println("${System.nanoTime()} Signal")
+            Thread.sleep(diff/* / 1000000L*/)
+            println("${System.currentTimeMillis()} Signal")
 
             clip!!.start()
         }.start()

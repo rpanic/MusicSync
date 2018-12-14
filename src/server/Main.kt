@@ -20,14 +20,23 @@ fun main(args: Array<String>) {
 
         if(x.equals("signal")){
 
-            s.connections.forEach {
+            /*s.connections.forEach {
                 it.calculateTimestampOffset()
             }
             //var maxPing = s.connections.map { it.getPing() }.max()!!
-            var maxPing = 500000000
+            var maxPing = 1000000000
 
             var timestamp = System.nanoTime() + maxPing
-            s.connections.forEach { it.signal(timestamp) }
+            s.connections.forEach { it.signal(timestamp) }*/
+
+            //Variante 2
+
+            var time = System.currentTimeMillis() + 1000;
+            s.connections.forEach{
+                it.writer.write("signal $time\n")
+                it.writer.newLine()
+                it.writer.flush()
+            }
 
         }
 
