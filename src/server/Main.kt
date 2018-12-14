@@ -7,8 +7,8 @@ fun main(args: Array<String>) {
     var s = Server(1337)
     s.listenAsync()
 
-    //Thread{client.main(arrayOf())}.start()
-    Thread{client.main(arrayOf())}.start()
+    Thread{client.main(args)}.start()
+    Thread{client.main(args)}.start()
 
     var scanner = Scanner(System.`in`)
     var x = scanner.nextLine()

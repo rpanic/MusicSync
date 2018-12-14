@@ -49,15 +49,58 @@ class ServerConnection(var socket: Socket) : Connection(socket) {
     fun calculateTimestampOffset() : Long{
 
         if(lastOffset == 0L || System.currentTimeMillis() - lastOffset > timeForNewPing){
-            getTimestampOffset()
-            getTimestampOffset()
-            offset = getTimestampOffset()
+            offset = getTimestampOffset2()
             lastOffset = System.currentTimeMillis()
         }
         println("Offset: $offset")
         return offset
 
     }
+
+    private fun getTimestampOffset2() : Long{
+
+        var c = 100
+
+        var list = ArrayList<Offset>()
+
+        for(i in 0..c){
+
+            writer.write("timestamp")
+            writer.newLine()
+            var start = System.nanoTime()
+            writer.flush()
+
+            var read = reader.readLine()
+            var ping = System.nanoTime() - start
+
+            //println("ping: $ping")
+
+            var own = System.nanoTime() - (ping / 2L)
+
+            if(read.startsWith("timestamprep")){
+                var other = read.split(" ")[1].toLong()
+
+                var offset = other - own;
+
+                list.add(Offset(ping, offset))
+            }
+        }
+
+        //Variante 1
+        /*list.sortBy { it.ping }
+        var shortened = list.subList(0, Math.round(list.size * 0.75f))
+        var offset = Math.round(shortened.map { it.offset }.average())
+
+        return offset*/
+
+        //Variante 2
+        list.sortBy { it.ping }
+        println("Selected: Ping ${list.get(0).ping} Offset ${list.get(0).offset}")
+        return list.get(0).offset
+
+    }
+
+    data class Offset(var ping: Long, var offset: Long)
 
     private fun getTimestampOffset() : Long{
 
